@@ -26,6 +26,55 @@ export function placePiece(board, cells, row, col, color) {
   return next
 }
 
+// Find every fully-filled row and column. Returns { rows: [...], cols: [...] }
+// of their indices. Rows and columns are detected independently so they clear
+// simultaneously (a shared cell at an intersection belongs to both).
+export function findClears(board) {
+  const size = board.length
+  const rows = []
+  const cols = []
+  for (let r = 0; r < size; r++) {
+    if (board[r].every((cell) => cell !== null)) rows.push(r)
+  }
+  for (let c = 0; c < board[0].length; c++) {
+    let full = true
+    for (let r = 0; r < size; r++) {
+      if (board[r][c] === null) {
+        full = false
+        break
+      }
+    }
+    if (full) cols.push(c)
+  }
+  return { rows, cols }
+}
+
+// Set of "r-c" keys for every cell that would be cleared.
+export function clearedKeys(board, clears) {
+  const keys = new Set()
+  for (const r of clears.rows) {
+    for (let c = 0; c < board[0].length; c++) keys.add(`${r}-${c}`)
+  }
+  for (const c of clears.cols) {
+    for (let r = 0; r < board.length; r++) keys.add(`${r}-${c}`)
+  }
+  return keys
+}
+
+// Return a NEW board with the given rows and columns emptied.
+export function applyClears(board, clears) {
+  const rowSet = new Set(clears.rows)
+  const colSet = new Set(clears.cols)
+  return board.map((row, r) =>
+    row.map((cell, c) => (rowSet.has(r) || colSet.has(c) ? null : cell)),
+  )
+}
+
+// Total number of lines cleared (rows + cols) for a clears result.
+export function clearCount(clears) {
+  return clears.rows.length + clears.cols.length
+}
+
 // Is there ANY position on the board where `cells` can be placed?
 export function canPlaceAnywhere(board, cells) {
   for (let r = 0; r < board.length; r++) {

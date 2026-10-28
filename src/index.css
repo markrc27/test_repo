@@ -68,6 +68,26 @@ body {
   opacity: 0.6;
 }
 
+.cell--clearing {
+  animation: clear-flash 220ms ease-out forwards;
+}
+
+@keyframes clear-flash {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  40% {
+    transform: scale(1.12);
+    filter: brightness(2.2);
+  }
+  100% {
+    transform: scale(0.1);
+    filter: brightness(2.6);
+    opacity: 0;
+  }
+}
+
 /* Piece tray */
 .tray {
   --tray-cell: 22px;
