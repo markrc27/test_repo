@@ -1,9 +1,18 @@
-// A single board cell. `color` is null for empty, or a CSS color for filled.
-export default function Cell({ color }) {
+// A single board cell.
+// - `color`: null for empty, or a CSS color for a filled (locked-in) cell.
+// - `preview`: 'valid' | 'invalid' | null — highlight while a piece hovers here.
+// - `previewColor`: tint to show for a valid preview.
+export default function Cell({ row, col, color, preview, previewColor }) {
+  const classes = ['cell']
+  if (color) classes.push('cell--filled')
+  if (preview === 'valid') classes.push('cell--preview-valid')
+  if (preview === 'invalid') classes.push('cell--preview-invalid')
+
+  let style
+  if (color) style = { backgroundColor: color }
+  else if (preview === 'valid') style = { backgroundColor: previewColor }
+
   return (
-    <div
-      className={`cell${color ? ' cell--filled' : ''}`}
-      style={color ? { backgroundColor: color } : undefined}
-    />
+    <div className={classes.join(' ')} style={style} data-row={row} data-col={col} />
   )
 }
